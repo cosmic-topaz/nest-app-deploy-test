@@ -1,0 +1,22 @@
+### Get All Users
+GET http://localhost:3000/users
+
+### Create User
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "name": "test user"
+}
+
+### Update User (미구현)
+PATCH http://localhost:3000/users/1
+Content-Type: application/json
+
+{
+  "name": "updated name"
+}
+
+### Delete User 
+DELETE http://localhost:3000/users/1
