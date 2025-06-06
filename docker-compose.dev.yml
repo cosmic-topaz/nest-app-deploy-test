@@ -12,16 +12,19 @@ services:
       - "5555:5555" # <- prisma studio
     volumes:
       - .:/app
-      - /app/node_modules
     env_file:
       - .env.development
-    command: npm run start:dev
+    command: sh -c "npx prisma generate && npm run start:dev"
     depends_on:
       - db
+    networks:
+      - backend
 
   db:
     image: mysql:8.0
     container_name: mysql-dev
+    networks:
+      - backend
     command:
       [
         "--default-authentication-plugin=mysql_native_password",
@@ -39,3 +42,5 @@ services:
 
 volumes:
   db-data:
+networks:
+  backend:
