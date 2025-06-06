@@ -13,8 +13,7 @@ services:
       - .env.production
     depends_on:
       - db
-    command: ["npm", "run", "pm2:start"]
-
+    command: ["node", "dist/main"]
 
   db:
     image: mysql:8.0

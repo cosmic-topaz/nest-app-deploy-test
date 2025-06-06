@@ -27,9 +27,4 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/prisma ./prisma
 
-
-# pm2 설치
-RUN npm install -g pm2
-
-# PM2로 서버 실행
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["node", "dist/main"]
