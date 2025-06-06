@@ -1,5 +1,19 @@
-node_modules
-dist
-.env
-.env*
+# 기본 무시 항목
 .git
+.gitignore
+npm-debug.log
+Dockerfile*
+docker-compose*.yml
+
+# 빌드시 제외
+.env.local
+.env.development
+.env.test
+
+# ❗ node_modules 전체는 무시하되 Prisma 관련은 복원
+node_modules
+!node_modules/@prisma
+!node_modules/.prisma
+
+# ❗ 빌드된 파일은 포함해야 함
+!dist
