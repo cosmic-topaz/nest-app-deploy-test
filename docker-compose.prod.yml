@@ -13,11 +13,15 @@ services:
       - .env.production
     depends_on:
       - db
+    networks:
+      - backend
     command: ["node", "dist/main"]
 
   db:
     image: mysql:8.0
     container_name: mysql-prod
+    networks:
+      - backend
     command:
       [
         "--default-authentication-plugin=mysql_native_password",
