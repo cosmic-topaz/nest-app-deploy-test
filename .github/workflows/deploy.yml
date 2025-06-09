@@ -1,0 +1,95 @@
+name: CI/CD - Build and Deploy NestJS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛠️ Build project
+        run: npm run build
+
+      - name: 🧳 Prepare deploy directory
+        run: |
+          mkdir deploy
+          cp -r dist deploy/
+          cp -r node_modules deploy/
+          cp package.json deploy/
+          cp ecosystem.config.js deploy/
+          echo "${{ secrets.ENV_PRODUCTION }}" > deploy/.env
+
+      - name: 🚀 Deploy to EC2 via rsync
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          rsync -az --delete -e "ssh -i key.pem -o StrictHostKeyChecking=no" \
+            ./deploy/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/my-nest-app/
+
+      - name: 🔁 Restart server with pm2
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd /home/ubuntu/my-nest-app
+            pm2 start ecosystem.config.js || pm2 restart ecosystem.config.js
+          EOFname: CI/CD - Build and Deploy NestJS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛠️ Build project
+        run: npm run build
+
+      - name: 🧳 Prepare deploy directory
+        run: |
+          mkdir deploy
+          cp -r dist deploy/
+          cp -r node_modules deploy/
+          cp package.json deploy/
+          cp ecosystem.config.js deploy/
+          echo "${{ secrets.ENV_PRODUCTION }}" > deploy/.env
+
+      - name: 🚀 Deploy to EC2 via rsync
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          rsync -az --delete -e "ssh -i key.pem -o StrictHostKeyChecking=no" \
+            ./deploy/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/my-nest-app/
+
+      - name: 🔁 Restart server with pm2
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd /home/ubuntu/my-nest-app
+            pm2 start ecosystem.config.js || pm2 restart ecosystem.config.js
+          EOF
