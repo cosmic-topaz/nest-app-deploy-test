@@ -6,6 +6,6 @@
 
 # branch list
 
-deploy-with-docker
+main: Github actions 와 pm2를 이용해서 배포 자동화.
 
-deploy-with-github-actions
+deploy-with-docker: 도커 이미지로 배포 해보기 그러나 t2.micro 에서 빌드하기는 버거워서 사용하지 않기로 결정함.
