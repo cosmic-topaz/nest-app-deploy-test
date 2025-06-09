@@ -43,6 +43,7 @@ jobs:
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/app
             npm install --omit=dev
+            npx prisma generate
             pm2 delete all || true
             pm2 start ecosystem.config.js
             pm2 save
