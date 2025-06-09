@@ -23,6 +23,10 @@ jobs:
           npm ci
           npm run build
 
+      - name: Create .env.production
+        run: |
+          echo "${{ secrets.ENV_PRODUCTION}}" > .env.production
+
       - name: Copy files to EC2
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
@@ -30,12 +34,8 @@ jobs:
           rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" \
             --exclude=".git" \
             --exclude="node_modules" \
-            ./dist ./prisma ecosystem.config.js package.json \
+            ./dist ./prisma ecosystem.config.js package.json .env.production\
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/app
-
-      - name: Create .env.production
-        run: |
-          echo "${{ secrets.ENV_PRODUCTION}}" > .env.production
 
       - name: Restart app on EC2 via PM2
         run: |
